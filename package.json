@@ -1,0 +1,22 @@
+{
+  "name": "textfromimage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.5"
+  },
+  "dependencies": {
+    "@gutenye/ocr-node": "^1.4.4",
+    "dotenv": "^16.4.5",
+    "node-tesseract-ocr": "^2.2.1",
+    "telegraf": "^4.16.3"
+  }
+}
