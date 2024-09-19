@@ -1,5 +1,5 @@
-import  tesseract  from "node-tesseract-ocr"
-import fs from 'fs'
+// import  tesseract  from "node-tesseract-ocr"
+// import fs from 'fs'
 import 'dotenv/config'
 import Ocr from '@gutenye/ocr-node'
 import { Telegraf } from 'telegraf'
@@ -18,13 +18,12 @@ import { Telegraf } from 'telegraf'
 const bot = new Telegraf(process.env.BOT_TOKEN)
 const ocr = await Ocr.create()
 bot.on('message', async (ctx) => {
-  console.log(ctx.message.photo[3].file_id)
   const url = await bot.telegram.getFileLink(ctx.message.photo[3].file_id)
-  console.log(url.href)
   const buffer = await (await fetch(url.href)).arrayBuffer()
-  // console.log(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/getFile?file_id=${ctx.message.photo[3].file_id}`)
   const result = await ocr.detect(buffer)
-  console.log(result.filter(item => item.text.includes('%')))
+  for(let i of result.filter(item => ['1', '2', '3', '4', '5'].includes(item.text.split(' ')[0]) && item.text.split(' ')[1] !== '2')){
+    ctx.reply(i.text.split(' ')[i.text.split(' ').length - 1])
+  }
 })
 
 // const ocr = await Ocr.create()
