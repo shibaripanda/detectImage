@@ -18,11 +18,19 @@ import { Telegraf } from 'telegraf'
 const bot = new Telegraf(process.env.BOT_TOKEN)
 const ocr = await Ocr.create()
 bot.on('message', async (ctx) => {
-  const url = await bot.telegram.getFileLink(ctx.message.photo[3].file_id)
-  const buffer = await (await fetch(url.href)).arrayBuffer()
-  const result = await ocr.detect(buffer)
-  for(let i of result.filter(item => ['1', '2', '3', '4', '5'].includes(item.text.split(' ')[0]) && item.text.split(' ')[1] !== '2')){
-    ctx.reply(i.text.split(' ')[i.text.split(' ').length - 1])
+  if(typeof ctx.message['photo'] !== 'undefined'){
+    const time = Date.now()
+    const url = await bot.telegram.getFileLink(ctx.message.photo[3].file_id)
+    const buffer = await (await fetch(url.href)).arrayBuffer()
+    console.log((Date.now() - time) / 1000 + ' ' + 'seconds getImage')
+    const result = await ocr.detect(buffer)
+    console.log((Date.now() - time) / 1000 + ' ' + 'seconds decoder')
+    for(let i of result.filter(item => item.text.split(' ').includes('796'))){
+      const data = i.text.split(' ')
+      console.log(i.text)
+      await ctx.reply(`Товар № ${result.filter(item => item.text.split(' ').includes('796')).indexOf(i) + 1}` + `\nКоличество: ${data[data.length - 6]}` + `\nЦена: ${data[data.length - 5]}` + `\nСумма: ${data[data.length - 4]}` + `\nСумма с НДС: ${data[data.length - 1]}`)
+    }
+    await ctx.reply((Date.now() - time) / 1000 + ' ' + 'seconds')
   }
 })
 
