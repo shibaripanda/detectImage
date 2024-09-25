@@ -3,6 +3,7 @@ import  tesseract  from "node-tesseract-ocr"
 import 'dotenv/config'
 import Ocr from '@gutenye/ocr-node'
 import { Telegraf } from 'telegraf'
+import  gm  from  'gm' // . subClass ( {  imageMagick : true  } )
 
 
 const  config  =  { 
@@ -14,33 +15,42 @@ const  config  =  {
     // presets: ["tsv"]
 }
 
+console.log(gm)
+
 const bot = new Telegraf(process.env.BOT_TOKEN)
 const ocr = await Ocr.create()
 bot.on('message', async (ctx) => {
+  try {
+    
+ 
   if(typeof ctx.message['photo'] !== 'undefined'){
     const time = Date.now()
     const url = await bot.telegram.getFileLink(ctx.message.photo[3].file_id)
-    const buffer = await (await fetch(url.href)).arrayBuffer()
-    console.log((Date.now() - time) / 1000 + ' ' + 'seconds getImage')
-    const result = await ocr.detect(buffer)
-    console.log((Date.now() - time) / 1000 + ' ' + 'seconds decoder')
-    for(let i of result.filter(item => item.text.split(' ').includes('796'))){
-      const data = i.text.split(' ')
-      console.log(i.text)
-      await ctx.reply(`Товар № ${result.filter(item => item.text.split(' ').includes('796')).indexOf(i) + 1}` + `\nКоличество: ${data[data.length - 6]}` + `\nЦена: ${data[data.length - 5]}` + `\nСумма: ${data[data.length - 4]}` + `\nСумма с НДС: ${data[data.length - 1]}`)
-    }
-    await ctx.reply((Date.now() - time) / 1000 + ' ' + 'seconds')
+    // const buffer = await (await fetch(url.href)).arrayBuffer()
+    // console.log((Date.now() - time) / 1000 + ' ' + 'seconds getImage')
+    // const result = await ocr.detect(buffer)
+    // console.log((Date.now() - time) / 1000 + ' ' + 'seconds decoder')
+    // for(let i of result.filter(item => item.text.split(' ').includes('796'))){
+    //   const data = i.text.split(' ')
+    //   console.log(i.text)
+    //   await ctx.reply(`Товар № ${result.filter(item => item.text.split(' ').includes('796')).indexOf(i) + 1}` + `\nКоличество: ${data[data.length - 6]}` + `\nЦена: ${data[data.length - 5]}` + `\nСумма: ${data[data.length - 4]}` + `\nСумма с НДС: ${data[data.length - 1]}`)
+    // }
+    // await ctx.reply((Date.now() - time) / 1000 + ' ' + 'seconds')
 
     // const img = fs.readFileSync(buffer)
     tesseract.recognize(url.href, config) 
-    .then ((text)  =>  { 
+    .then (async(text)  =>  { 
+      await ctx.reply(text)
       console.log("Результат:\n", text) 
     }) 
     .catch((error)  =>  { 
       console.log('Ошибка') 
     })
   }
-
+  }catch(error){
+    console.log('error')
+      
+    }
 })
 
 
