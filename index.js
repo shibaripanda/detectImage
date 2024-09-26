@@ -14,8 +14,52 @@ const  config  =  {
     // tessedit_char_whitelist: "0123456789",
     // presets: ["tsv"]
 }
+const x = 5150
 
-console.log(gm)
+gm('./img/1.JPG')
+// .resizeExact(x)
+// .charcoal(3)
+// .quality(25)
+// .paint(2)
+// .chop(54, 1, 307, 1)
+// .monochrome()
+// .equalize()
+.enhance()
+
+// .background("#FF0000")
+.colors(10)
+// .noise("laplacian")
+
+.contrast(-1)
+
+// .enhance()
+// .monochrome()
+
+
+// .colorize(80, 0, 30)
+// .crop(200, 155, 300, 0)
+.write('./img/2.pdf', function (err) {
+  if(err) console.log(err)
+  else {
+    tesseract.recognize('./img/2.JPG', config) 
+    .then (async(text)  =>  {
+      tesseract.recognize('./img/1.pdf', config) 
+      .then (async(text1)  =>  {
+        console.log(text)
+         console.log(text.length, text1.length, x)
+        // await ctx.reply(text)
+        // console.log("Результат:\n", text) 
+      }) 
+      .catch((error)  =>  { 
+        console.log('Ошибка') 
+      })
+      // await ctx.reply(text)
+      // console.log("Результат:\n", text) 
+    }) 
+    .catch((error)  =>  { 
+      console.log('Ошибка') 
+    })}
+})
 
 const bot = new Telegraf(process.env.BOT_TOKEN)
 const ocr = await Ocr.create()
